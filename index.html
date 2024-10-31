@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Person Saying Hi</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    const characterMaterial = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+    const characterGeometry = new THREE.BoxGeometry(1, 1.5, 0.5);
+    const character = new THREE.Mesh(characterGeometry, characterMaterial);
+    character.position.y = 0.75;
+    scene.add(character);
+
+    const armMaterial = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+    const armGeometry = new THREE.BoxGeometry(0.2, 0.6, 0.2);
+    const arm = new THREE.Mesh(armGeometry, armMaterial);
+    arm.position.set(-0.6, 1.2, 0);
+    scene.add(arm);
+
+    let wave = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        wave += 0.05;
+        arm.rotation.z = Math.sin(wave) * 0.5;
+        renderer.render(scene, camera);
+    }
+
+    camera.position.z = 5;
+    animate();
+
+    const loader = new THREE.FontLoader();
+    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+        const textGeometry = new THREE.TextGeometry('Hi', {
+            font: font,
+            size: 0.5,
+            height: 0.1
+        });
+        const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+        textMesh.position.set(-0.5, 2, 0);
+        scene.add(textMesh);
+    });
+
+    window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+    });
+</script>
+</body>
+</html>
